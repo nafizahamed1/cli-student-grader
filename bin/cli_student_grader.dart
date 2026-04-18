@@ -19,7 +19,12 @@ void main() {
 
 1. Add Student
 2. Record Score
-3. Exit
+3. Add Bonus
+4. Add Comment
+5. View All Students
+6. View Report Card
+7. Class Summary
+8. Exit
 
 Choose an option:
 """);
@@ -31,11 +36,7 @@ Choose an option:
         addStudent(students);
         break;
 
-      case "2":
-        recordScore(students);
-        break;
-
-      case "3":
+      case "8":
         running = false;
         print("Exiting...");
         break;
@@ -47,7 +48,6 @@ Choose an option:
   } while (running);
 }
 
-
 void addStudent(List<Map<String, dynamic>> students) {
   print("Enter student name:");
   var name = stdin.readLineSync();
@@ -55,7 +55,7 @@ void addStudent(List<Map<String, dynamic>> students) {
   var student = {
     "name": name,
     "scores": <int>[],
-    "subjects": {...availableSubjects},
+    "subjects": {...availableSubjects}, 
     "bonus": null,
     "comment": null,
   };
@@ -63,36 +63,4 @@ void addStudent(List<Map<String, dynamic>> students) {
   students.add(student);
 
   print("Student $name added successfully!");
-}
-
-void recordScore(List<Map<String, dynamic>> students) {
-  if (students.isEmpty) {
-    print("No students available!");
-    return;
-  }
-
-
-  for (int i = 0; i < students.length; i++) {
-    print("${i + 1}. ${students[i]["name"]}");
-  }
-
-  print("Select student:");
-  var index = int.parse(stdin.readLineSync()!) - 1;
-
-  int score;
-
-  while (true) {
-    print("Enter score (0-100):");
-    score = int.parse(stdin.readLineSync()!);
-
-    if (score >= 0 && score <= 100) {
-      break;
-    }
-
-    print("Invalid score! Try again.");
-  }
-
-  students[index]["scores"].add(score);
-
-  print("Score added successfully!");
 }
