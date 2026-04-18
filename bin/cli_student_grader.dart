@@ -21,10 +21,7 @@ void main() {
 2. Record Score
 3. Add Bonus
 4. Add Comment
-5. View All Students
-6. View Report Card
-7. Class Summary
-8. Exit
+5. Exit
 
 Choose an option:
 """);
@@ -36,7 +33,19 @@ Choose an option:
         addStudent(students);
         break;
 
-      case "8":
+      case "2":
+        recordScore(students);
+        break;
+
+      case "3":
+        addBonus(students);
+        break;
+
+      case "4":
+        addComment(students);
+        break;
+
+      case "5":
         running = false;
         print("Exiting...");
         break;
@@ -48,6 +57,7 @@ Choose an option:
   } while (running);
 }
 
+
 void addStudent(List<Map<String, dynamic>> students) {
   print("Enter student name:");
   var name = stdin.readLineSync();
@@ -55,12 +65,90 @@ void addStudent(List<Map<String, dynamic>> students) {
   var student = {
     "name": name,
     "scores": <int>[],
-    "subjects": {...availableSubjects}, 
+    "subjects": {...availableSubjects},
     "bonus": null,
     "comment": null,
   };
 
   students.add(student);
 
-  print("Student $name added successfully!");
+  print("Student $name added!");
+}
+
+
+void recordScore(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students available!");
+    return;
+  }
+
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  print("Select student:");
+  var index = int.parse(stdin.readLineSync()!) - 1;
+
+  int score;
+
+  while (true) {
+    print("Enter score (0-100):");
+    score = int.parse(stdin.readLineSync()!);
+
+    if (score >= 0 && score <= 100) break;
+
+    print("Invalid score!");
+  }
+
+  students[index]["scores"].add(score);
+
+  print("Score added!");
+}
+
+
+void addBonus(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students available!");
+    return;
+  }
+
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  print("Select student:");
+  var index = int.parse(stdin.readLineSync()!) - 1;
+
+  print("Enter bonus (1-10):");
+  var bonus = int.parse(stdin.readLineSync()!);
+
+
+  students[index]["bonus"] ??= bonus;
+
+  print("Bonus added!");
+}
+
+
+void addComment(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students available!");
+    return;
+  }
+
+  for (int i = 0; i < students.length; i++) {
+    print("${i + 1}. ${students[i]["name"]}");
+  }
+
+  print("Select student:");
+  var index = int.parse(stdin.readLineSync()!) - 1;
+
+  print("Enter comment:");
+  var comment = stdin.readLineSync();
+
+  students[index]["comment"] = comment;
+
+ 
+  String display = students[index]["comment"]?.toUpperCase() ?? "NO COMMENT";
+
+  print("Saved comment: $display");
 }
