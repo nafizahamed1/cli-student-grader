@@ -22,7 +22,8 @@ void main() {
 3. Add Bonus
 4. Add Comment
 5. View Report Card
-6. Exit
+6. Class Summary
+7. Exit
 
 Choose an option:
 """);
@@ -51,6 +52,10 @@ Choose an option:
         break;
 
       case "6":
+        classSummary(students);
+        break;
+
+      case "7":
         running = false;
         print("Exiting...");
         break;
@@ -78,11 +83,9 @@ void addStudent(List<Map<String, dynamic>> students) {
   print("Student $name added!");
 }
 
+
 void recordScore(List<Map<String, dynamic>> students) {
-  if (students.isEmpty) {
-    print("No students!");
-    return;
-  }
+  if (students.isEmpty) return;
 
   for (int i = 0; i < students.length; i++) {
     print("${i + 1}. ${students[i]["name"]}");
@@ -102,7 +105,6 @@ void recordScore(List<Map<String, dynamic>> students) {
   }
 
   students[index]["scores"].add(score);
-  print("Score added!");
 }
 
 
@@ -120,10 +122,7 @@ void addBonus(List<Map<String, dynamic>> students) {
   var bonus = int.parse(stdin.readLineSync()!);
 
   students[index]["bonus"] ??= bonus;
-
-  print("Bonus added!");
 }
-
 
 void addComment(List<Map<String, dynamic>> students) {
   if (students.isEmpty) return;
@@ -137,16 +136,11 @@ void addComment(List<Map<String, dynamic>> students) {
 
   print("Enter comment:");
   students[index]["comment"] = stdin.readLineSync();
-
-  print("Comment saved!");
 }
 
 
 void viewReportCard(List<Map<String, dynamic>> students) {
-  if (students.isEmpty) {
-    print("No students!");
-    return;
-  }
+  if (students.isEmpty) return;
 
   for (int i = 0; i < students.length; i++) {
     print("${i + 1}. ${students[i]["name"]}");
@@ -158,24 +152,14 @@ void viewReportCard(List<Map<String, dynamic>> students) {
   var s = students[index];
   var scores = s["scores"] as List<int>;
 
-  if (scores.isEmpty) {
-    print("No scores available!");
-    return;
-  }
-
- 
   int sum = 0;
   for (var sc in scores) {
     sum += sc;
   }
 
   double avg = sum / scores.length;
-
-
   avg += (s["bonus"] ?? 0);
-
   if (avg > 100) avg = 100;
-
 
   String grade;
 
@@ -200,21 +184,84 @@ void viewReportCard(List<Map<String, dynamic>> students) {
     _ => "Unknown"
   };
 
-  
-  String comment = s["comment"]?.toUpperCase() ?? "NO COMMENT";
-
- 
   print("""
 ╔══════════════════════════════╗
 ║        REPORT CARD           ║
 ╠══════════════════════════════╣
-║ Name: ${s["name"]}
-║ Scores: $scores
-║ Bonus: +${s["bonus"] ?? 0}
-║ Average: ${avg.toStringAsFixed(1)}
+║ Name: ${s["name"]}            ║
+║ Scores: $scores                 ║
+║ Bonus: +${s["bonus"] ?? 0}       ║
+║ Average: ${avg.toStringAsFixed(1)}    ║
 ║ Grade: $grade
-║ Comment: $comment
-║ Feedback: $feedback
+║ Comment: ${s["comment"]?.toUpperCase() ?? "NO COMMENT"}   ║
+║ Feedback: $feedback           ║       
 ╚══════════════════════════════╝
+""");
+}
+
+
+
+void classSummary(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students!");
+    return;
+  }
+
+  int total = students.length;
+  double totalAvg = 0;
+  double highest = 0;
+  double lowest = 100;
+
+  Set<String> grades = {};
+
+  var summaryLines = [
+    for (var s in students)
+      (() {
+        var scores = s["scores"] as List<int>;
+        if (scores.isEmpty) return "${s["name"]}: No scores";
+
+        int sum = 0;
+        for (var sc in scores) {
+          sum += sc;
+        }
+
+        double avg = sum / scores.length;
+        avg += (s["bonus"] ?? 0);
+
+        if (avg > 100) avg = 100;
+
+        if (avg >= 90) {
+          grades.add("A");
+        } else if (avg >= 80) {
+          grades.add("B");
+        } else if (avg >= 70) {
+          grades.add("C");
+        } else if (avg >= 60) {
+          grades.add("D");
+        } else {
+          grades.add("F");
+        }
+
+        totalAvg += avg;
+
+        if (avg > highest) highest = avg;
+        if (avg < lowest) lowest = avg;
+
+        return "${s["name"]}: ${avg.toStringAsFixed(1)}";
+      })()
+  ];
+
+  print("""
+===== CLASS SUMMARY =====
+
+Total Students: $total
+Class Average: ${(totalAvg / total).toStringAsFixed(1)}
+Highest Avg: ${highest.toStringAsFixed(1)}
+Lowest Avg: ${lowest.toStringAsFixed(1)}
+
+Grades Present: $grades
+
+--- Individual ---
+${summaryLines.join("\n")}
 """);
 }
