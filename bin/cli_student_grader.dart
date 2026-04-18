@@ -2,6 +2,13 @@ import 'dart:io';
 
 const String appTitle = "Student Grader v1.0";
 
+final availableSubjects = {
+  "Math",
+  "English",
+  "Science",
+  "ICT"
+};
+
 void main() {
   var students = <Map<String, dynamic>>[];
   var running = true;
@@ -26,15 +33,34 @@ Choose an option:
 
     switch (choice) {
       case "1":
-        print("Add Student selected");
+        addStudent(students);
         break;
+
       case "8":
         running = false;
         print("Exiting...");
         break;
+
       default:
         print("Invalid option");
     }
 
   } while (running);
+}
+
+void addStudent(List<Map<String, dynamic>> students) {
+  print("Enter student name:");
+  var name = stdin.readLineSync();
+
+  var student = {
+    "name": name,
+    "scores": <int>[],
+    "subjects": {...availableSubjects}, 
+    "bonus": null,
+    "comment": null,
+  };
+
+  students.add(student);
+
+  print("Student $name added successfully!");
 }
